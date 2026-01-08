@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "musicbrainzngs2"
+description = "Python bindings for the MusicBrainz NGS and the Cover Art Archive webservices"
+readme = { file = "README.rst", content-type = "text/x-rst" }
+license = "BSD-2-clause"
+
+authors = [
+	{ name = "Martin Rys", email = "martin@rys.rs" }
+]
+
+requires-python = ">=3.10"
+
+classifiers = [
+	"Development Status :: 5 - Production/Stable",
+	"Intended Audience :: Developers",
+	"Operating System :: OS Independent",
+	"Programming Language :: Python",
+	"Topic :: Database :: Front-Ends",
+	"Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/C0rn3j/python-musicbrainzngs2"
+
+[tool.setuptools]
+packages = ["musicbrainzngs"]
+
+[tool.setuptools.dynamic]
+version = { attr = "musicbrainzngs.musicbrainz._version" }

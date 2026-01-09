@@ -253,9 +253,9 @@ def _check_filter_and_make_params(entity, includes, release_status=[], release_t
     the filters can be used with the given includes. Return a params
     dict that can be passed to _do_mb_query.
     """
-    if isinstance(release_status, compat.basestring):
+    if isinstance(release_status, (str,bytes)):
         release_status = [release_status]
-    if isinstance(release_type, compat.basestring):
+    if isinstance(release_type, (str,bytes)):
         release_type = [release_type]
     _check_filter(release_status, VALID_RELEASE_STATUSES)
     _check_filter(release_type, VALID_RELEASE_TYPES)
@@ -640,7 +640,7 @@ def _mb_request(path, method='GET', auth_required=AUTH_NO,
     # Encode Unicode arguments using UTF-8.
     newargs = []
     for key, value in sorted(args.items()):
-        if isinstance(value, compat.unicode):
+        if isinstance(value, str):
             value = value.encode('utf8')
         newargs.append((key, value))
 

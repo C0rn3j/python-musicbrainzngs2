@@ -27,7 +27,7 @@ class FakeOpener(OpenerDirector):
         if self.exception:
             raise self.exception
 
-        if isinstance(self.response, compat.unicode):
+        if isinstance(self.response, str):
             return StringIO.StringIO(self.response)
         else:
             return BytesIO(self.response)

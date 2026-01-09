@@ -15,7 +15,7 @@ __all__ = [
 
 import json
 from urllib.parse import urlunparse
-from urllib.request import HTTPHandler, build_opener
+from urllib.request import HTTPHandler
 
 from musicbrainzngs import compat, musicbrainz
 from musicbrainzngs.util import _unicode

@@ -10,6 +10,8 @@ __all__ = [
     ]
 
 import json
+from urllib.parse import urlunparse
+from urllib.request import HTTPHandler, build_opener
 
 from musicbrainzngs import compat, musicbrainz
 from musicbrainzngs.util import _unicode
@@ -52,7 +54,7 @@ def _caa_request(mbid, imageid=None, size=None, entitytype="release"):
         path.append("%s-%s" % (imageid, size))
     elif imageid:
         path.append(imageid)
-    url = compat.urlunparse((
+    url = urlunparse((
         'https' if https else 'http',
         hostname,
         '/%s' % '/'.join(path),
@@ -63,7 +65,7 @@ def _caa_request(mbid, imageid=None, size=None, entitytype="release"):
     musicbrainz._log.debug("GET request for %s" % (url, ))
 
     # Set up HTTP request handler and URL opener.
-    httpHandler = compat.HTTPHandler(debuglevel=0)
+    httpHandler = HTTPHandler(debuglevel=0)
     handlers = [httpHandler]
 
     opener = compat.build_opener(*handlers)

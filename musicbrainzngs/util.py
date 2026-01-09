@@ -6,6 +6,7 @@
 import locale
 import sys
 import xml.etree.ElementTree as ET
+from io import StringIO
 
 from . import compat
 
@@ -39,6 +40,6 @@ def bytes_to_elementtree(bytes_or_file):
 
 	s = _unicode(s, "utf-8")
 
-	f = compat.StringIO(s)
+	f = StringIO(s)
 	tree = ET.ElementTree(file=f)
 	return tree

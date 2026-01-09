@@ -1,4 +1,5 @@
 import unittest
+from urllib.parse import quote_plus
 
 import musicbrainzngs
 from test import _common
@@ -26,7 +27,7 @@ class SearchUrlTest(unittest.TestCase):
         # TODO: We escape special characters and then urlencode all query parameters, which may
         # not be necessary, but MusicBrainz accepts it and appears to return the same value as without
         expected_query = r'entity:(bdb24cb5\-404b\-4f60\-bba4\-7b730325ae47)'
-        expected = 'https://musicbrainz.org/ws/2/annotation/?query=%s' % musicbrainzngs.compat.quote_plus(expected_query)
+        expected = 'https://musicbrainz.org/ws/2/annotation/?query=%s' % quote_plus(expected_query)
         self.assertEqual(expected, self.opener.get_url())
 
         # Invalid query field
@@ -39,7 +40,7 @@ class SearchUrlTest(unittest.TestCase):
 
         musicbrainzngs.search_artists(artist="Dynamo Go")
         expected_query = 'artist:(dynamo go)'
-        expected = 'https://musicbrainz.org/ws/2/artist/?query=%s' % musicbrainzngs.compat.quote_plus(expected_query)
+        expected = 'https://musicbrainz.org/ws/2/artist/?query=%s' % quote_plus(expected_query)
         self.assertEqual(expected, self.opener.get_url())
 
         # Invalid query field
@@ -52,7 +53,7 @@ class SearchUrlTest(unittest.TestCase):
 
         musicbrainzngs.search_events(event="woodstock")
         expected_query = 'event:(woodstock)'
-        expected = 'https://musicbrainz.org/ws/2/event/?query=%s' % musicbrainzngs.compat.quote_plus(expected_query)
+        expected = 'https://musicbrainz.org/ws/2/event/?query=%s' % quote_plus(expected_query)
         self.assertEqual(expected, self.opener.get_url())
 
         # Invalid query field
@@ -65,7 +66,7 @@ class SearchUrlTest(unittest.TestCase):
 
         musicbrainzngs.search_labels(label="Waysafe")
         expected_query = 'label:(waysafe)'
-        expected = 'https://musicbrainz.org/ws/2/label/?query=%s' % musicbrainzngs.compat.quote_plus(expected_query)
+        expected = 'https://musicbrainz.org/ws/2/label/?query=%s' % quote_plus(expected_query)
         self.assertEqual(expected, self.opener.get_url())
 
         # Invalid query field
@@ -78,7 +79,7 @@ class SearchUrlTest(unittest.TestCase):
 
         musicbrainzngs.search_places(place="Fillmore")
         expected_query = 'place:(fillmore)'
-        expected = 'https://musicbrainz.org/ws/2/place/?query=%s' % musicbrainzngs.compat.quote_plus(expected_query)
+        expected = 'https://musicbrainz.org/ws/2/place/?query=%s' % quote_plus(expected_query)
         self.assertEqual(expected, self.opener.get_url())
 
         # Invalid query field
@@ -91,7 +92,7 @@ class SearchUrlTest(unittest.TestCase):
 
         musicbrainzngs.search_releases(release="Affordable Pop Music")
         expected_query = 'release:(affordable pop music)'
-        expected = 'https://musicbrainz.org/ws/2/release/?query=%s' % musicbrainzngs.compat.quote_plus(expected_query)
+        expected = 'https://musicbrainz.org/ws/2/release/?query=%s' % quote_plus(expected_query)
         self.assertEqual(expected, self.opener.get_url())
 
         # Invalid query field
@@ -104,7 +105,7 @@ class SearchUrlTest(unittest.TestCase):
 
         musicbrainzngs.search_release_groups(releasegroup="Affordable Pop Music")
         expected_query = 'releasegroup:(affordable pop music)'
-        expected = 'https://musicbrainz.org/ws/2/release-group/?query=%s' % musicbrainzngs.compat.quote_plus(expected_query)
+        expected = 'https://musicbrainz.org/ws/2/release-group/?query=%s' % quote_plus(expected_query)
         self.assertEqual(expected, self.opener.get_url())
 
         # Invalid query field
@@ -117,7 +118,7 @@ class SearchUrlTest(unittest.TestCase):
 
         musicbrainzngs.search_recordings(recording="Thief of Hearts")
         expected_query = 'recording:(thief of hearts)'
-        expected = 'https://musicbrainz.org/ws/2/recording/?query=%s' % musicbrainzngs.compat.quote_plus(expected_query)
+        expected = 'https://musicbrainz.org/ws/2/recording/?query=%s' % quote_plus(expected_query)
         self.assertEqual(expected, self.opener.get_url())
 
         # Invalid query field
@@ -130,7 +131,7 @@ class SearchUrlTest(unittest.TestCase):
 
         musicbrainzngs.search_works(work="Fountain City")
         expected_query = 'work:(fountain city)'
-        expected = 'https://musicbrainz.org/ws/2/work/?query=%s' % musicbrainzngs.compat.quote_plus(expected_query)
+        expected = 'https://musicbrainz.org/ws/2/work/?query=%s' % quote_plus(expected_query)
         self.assertEqual(expected, self.opener.get_url())
 
         # Invalid query field

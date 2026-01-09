@@ -19,6 +19,10 @@ from warnings import warn
 from musicbrainzngs import mbxml
 from musicbrainzngs import util
 from musicbrainzngs import compat
+from http.client import BadStatusLine, HTTPException
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlencode, urlunparse
+from urllib.request import HTTPDigestAuthHandler, HTTPHandler, HTTPPasswordMgr, Request
 
 _version = "0.7.1"
 _log = logging.getLogger("musicbrainzngs")
@@ -421,7 +425,7 @@ class _rate_limit(object):
             return self.fun(*args, **kwargs)
 
 # From pymb2
-class _RedirectPasswordMgr(compat.HTTPPasswordMgr):
+class _RedirectPasswordMgr(HTTPPasswordMgr):
 	def __init__(self):
 		self._realms = { }
 
@@ -436,13 +440,13 @@ class _RedirectPasswordMgr(compat.HTTPPasswordMgr):
 		# ignoring the uri parameter intentionally
 		self._realms[realm] = (username, password)
 
-class _DigestAuthHandler(compat.HTTPDigestAuthHandler):
+class _DigestAuthHandler(HTTPDigestAuthHandler):
     def get_authorization (self, req, chal):
         qop = chal.get ('qop', None)
         if qop and ',' in qop and 'auth' in qop.split (','):
             chal['qop'] = 'auth'
 
-        return compat.HTTPDigestAuthHandler.get_authorization (self, req, chal)
+        return HTTPDigestAuthHandler.get_authorization (self, req, chal)
 
     def _encode_utf8(self, msg):
         """The MusicBrainz server also accepts UTF-8 encoded passwords."""
@@ -467,10 +471,10 @@ class _DigestAuthHandler(compat.HTTPDigestAuthHandler):
         KD = lambda s, d: H("%s:%s" % (s, d))
         return H, KD
 
-class _MusicbrainzHttpRequest(compat.Request):
+class _MusicbrainzHttpRequest(Request):
 	""" A custom request handler that allows DELETE and PUT"""
 	def __init__(self, method, url, data=None):
-		compat.Request.__init__(self, url, data)
+		Request.__init__(self, url, data)
 		allowed_m = ["GET", "POST", "DELETE", "PUT"]
 		if method not in allowed_m:
 			raise ValueError("invalid method: %s" % method)
@@ -501,7 +505,7 @@ def _safe_read(opener, req, body=None, max_retries=_max_retries, retry_delay_del
 				f = opener.open(req)
 			return f.read()
 
-		except compat.HTTPError as exc:
+		except HTTPError as exc:
 			if exc.code in (400, 404, 411):
 				# Bad request, not found, etc.
 				raise ResponseError(cause=exc)
@@ -515,13 +519,13 @@ def _safe_read(opener, req, body=None, max_retries=_max_retries, retry_delay_del
 				# retrying for now.
 				_log.info("unknown HTTP error %i" % exc.code)
 			last_exc = exc
-		except compat.BadStatusLine as exc:
+		except BadStatusLine as exc:
 			_log.info("bad status line")
 			last_exc = exc
-		except compat.HTTPException as exc:
+		except HTTPException as exc:
 			_log.info("miscellaneous HTTP exception: %s" % str(exc))
 			last_exc = exc
-		except compat.URLError as exc:
+		except URLError as exc:
 			if isinstance(exc.reason, socket.error):
 				code = exc.reason.errno
 				if code == 104: # "Connection reset by peer."
@@ -646,18 +650,18 @@ def _mb_request(path, method='GET', auth_required=AUTH_NO,
 
     # Construct the full URL for the request, including hostname and
     # query string.
-    url = compat.urlunparse((
+    url = urlunparse((
         'https' if https else 'http',
         hostname,
         '/ws/2/%s' % path,
         '',
-        compat.urlencode(newargs),
+        urlencode(newargs),
         ''
     ))
     _log.debug("%s request for %s" % (method, url))
 
     # Set up HTTP request handler and URL opener.
-    httpHandler = compat.HTTPHandler(debuglevel=0)
+    httpHandler = HTTPHandler(debuglevel=0)
     handlers = [httpHandler]
 
     # Add credentials if required.

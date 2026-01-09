@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 from . import util
 
 
-def fixtag(tag, namespaces):
+def fixtag(tag, namespaces: dict[str, str]):
 	# given a decorated tag (of the form {uri}tag), return prefixed
 	# tag and namespace declaration, if any
 	if isinstance(tag, ET.QName):
@@ -20,13 +20,10 @@ def fixtag(tag, namespaces):
 	if prefix is None:
 		prefix = "ns%d" % len(namespaces)
 		namespaces[namespace_uri] = prefix
-		if prefix == "xml":
-			xmlns = None
-		else:
-			xmlns = ("xmlns:%s" % prefix, namespace_uri)
+		xmlns = None if prefix == "xml" else (f"xmlns:{prefix}", namespace_uri)
 	else:
 		xmlns = None
-	return "%s:%s" % (prefix, tag), xmlns
+	return f"{prefix}:{tag}", xmlns
 
 
 NS_MAP = {"http://musicbrainz.org/ns/mmd-2.0#": "ws2", "http://musicbrainz.org/ns/ext#-2.0": "ext"}
@@ -63,7 +60,7 @@ def make_artist_credit(artists):
 	return "".join(names)
 
 
-def parse_elements(valid_els, inner_els, element):
+def parse_elements(valid_els: list[str], inner_els: dict, element) -> dict:
 	"""Extract single level subelements from an element.
 	For example, given the element:
 	<element>
@@ -104,7 +101,7 @@ def parse_elements(valid_els, inner_els, element):
 			# add counts for lists when available
 			m = re.match(r"([a-z0-9-]+)-list", t)
 			if m and "count" in sub.attrib:
-				result["%s-count" % m.group(1)] = int(sub.attrib["count"])
+				result[f"{m.group(1)}-count"] = int(sub.attrib["count"])
 		else:
 			_log.info("in <%s>, uncaught <%s>", fixtag(element.tag, NS_MAP)[0], t)
 	return result
@@ -131,7 +128,7 @@ def parse_attributes(attributes, element):
 	return result
 
 
-def parse_message(message):
+def parse_message(message) -> dict:
 	tree = util.bytes_to_elementtree(message)
 	root = tree.getroot()
 	result = {}
@@ -212,16 +209,14 @@ def parse_annotation(annotation):
 
 
 def parse_lifespan(lifespan):
-	parts = parse_elements(["begin", "end", "ended"], {}, lifespan)
-
-	return parts
+	return parse_elements(["begin", "end", "ended"], {}, lifespan)
 
 
 def parse_area_list(al):
 	return [parse_area(a) for a in al]
 
 
-def parse_area(area):
+def parse_area(area) -> dict:
 	result = {}
 	attribs = ["id", "type", "ext:score"]
 	elements = ["name", "sort-name", "disambiguation"]
@@ -508,15 +503,15 @@ def parse_medium(medium):
 	return result
 
 
-def parse_disc_list(dl):
+def parse_disc_list(dl) -> list:
 	return [parse_disc(d) for d in dl]
 
 
-def parse_text_representation(textr):
+def parse_text_representation(textr) -> dict:
 	return parse_elements(["language", "script"], {}, textr)
 
 
-def parse_release_group(rg):
+def parse_release_group(rg) -> dict:
 	result = {}
 	attribs = ["id", "type", "ext:score"]
 	elements = ["title", "user-rating", "first-release-date", "primary-type", "disambiguation"]
@@ -582,7 +577,7 @@ def parse_external_id_list(pl):
 	return [parse_attributes(["id"], p)["id"] for p in pl]
 
 
-def parse_element_list(el):
+def parse_element_list(el) -> list:
 	return [e.text for e in el]
 
 
@@ -590,10 +585,10 @@ def parse_work_list(wl):
 	return [parse_work(w) for w in wl]
 
 
-def parse_work(work):
+def parse_work(work) -> dict:
 	result = {}
-	attribs = ["id", "ext:score", "type"]
-	elements = ["title", "user-rating", "language", "iswc", "disambiguation"]
+	attribs: list[str] = ["id", "ext:score", "type"]
+	elements: list[str] = ["title", "user-rating", "language", "iswc", "disambiguation"]
 	inner_els = {
 		"tag-list": parse_tag_list,
 		"user-tag-list": parse_tag_list,
@@ -775,14 +770,14 @@ def parse_track(track):
 	return result
 
 
-def parse_tag_list(tl):
+def parse_tag_list(tl: ET.Element) -> list[dict[str, str]]:
 	return [parse_tag(t) for t in tl]
 
 
-def parse_tag(tag):
-	result = {}
-	attribs = ["count"]
-	elements = ["name"]
+def parse_tag(tag: ET.Element) -> dict[str, str]:
+	result: dict[str, str] = {}
+	attribs: list[str] = ["count"]
+	elements: list[str] = ["name"]
 
 	result.update(parse_attributes(attribs, tag))
 	result.update(parse_elements(elements, {}, tag))
@@ -877,10 +872,10 @@ def make_rating_request(**kwargs):
 	return ET.tostring(root, "utf-8")
 
 
-def make_isrc_request(recording2isrcs):
+def make_isrc_request(recording2isrcs: dict):
 	NS = "http://musicbrainz.org/ns/mmd-2.0#"
-	root = ET.Element("{%s}metadata" % NS)
-	rec_list = ET.SubElement(root, "{%s}recording-list" % NS)
+	root = ET.Element(f"{{{NS}}}metadata")
+	rec_list = ET.SubElement(root, f"{{{NS}}}recording-list")
 	for rec, isrcs in recording2isrcs.items():
 		if len(isrcs) > 0:
 			rec_xml = ET.SubElement(rec_list, "{%s}recording" % NS)

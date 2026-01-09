@@ -462,23 +462,23 @@ class AuthenticationError(WebServiceError):
 # Helpers for validating and formatting allowed sets.
 
 
-def _check_includes_impl(includes, valid_includes):
+def _check_includes_impl(includes, valid_includes) -> None:
 	for i in includes:
 		if i not in valid_includes:
 			raise InvalidIncludeError("Bad includes: %s is not a valid include" % i)
 
 
-def _check_includes(entity, inc):
+def _check_includes(entity, inc) -> None:
 	_check_includes_impl(inc, VALID_INCLUDES[entity])
 
 
-def _check_filter(values, valid):
+def _check_filter(values, valid) -> None:
 	for v in values:
 		if v not in valid:
 			raise InvalidFilterError(v)
 
 
-def _check_filter_and_make_params(entity, includes, release_status=[], release_type=[]):
+def _check_filter_and_make_params(entity, includes, release_status=[], release_type=[]) -> dict:
 	"""Check that the status or type values are valid. Then, check that
 	the filters can be used with the given includes. Return a params
 	dict that can be passed to _do_mb_query.
@@ -810,8 +810,7 @@ def mb_parser_xml(resp):
 	except Exception as exc:
 		if isinstance(exc, ETREE_EXCEPTIONS):
 			raise ResponseError(cause=exc)
-		else:
-			raise
+		raise
 
 
 # Defaults
@@ -976,7 +975,7 @@ def _do_mb_query(entity, id, includes=[], params={}):
 	return _mb_request(path, "GET", auth_required, args=args)
 
 
-def _do_mb_search(entity, query="", fields={}, limit=None, offset=None, strict=False):
+def _do_mb_search(entity, query: str = "", fields: dict = {}, limit=None, offset=None, strict: bool = False) -> dict:
 	"""Perform a full-text search on the MusicBrainz search server.
 	`query` is a lucene query string when no fields are set,
 	but is escaped when any fields are given. `fields` is a dictionary
@@ -998,7 +997,7 @@ def _do_mb_search(entity, query="", fields={}, limit=None, offset=None, strict=F
 	for key, value in fields.items():
 		# Ensure this is a valid search field.
 		if key not in VALID_SEARCH_FIELDS[entity]:
-			raise InvalidSearchFieldError("%s is not a valid search field for %s" % (key, entity))
+			raise InvalidSearchFieldError(f"{key} is not a valid search field for {entity}")
 
 		# Escape Lucene's special characters.
 		value = util._unicode(value)
@@ -1179,7 +1178,7 @@ def search_areas(query="", limit=None, offset=None, strict=False, **fields):
 
 
 @_docstring_search("artist")
-def search_artists(query="", limit=None, offset=None, strict=False, **fields):
+def search_artists(query="", limit=None, offset=None, strict=False, **fields) -> dict:
 	"""Search for artists and return a dict with an 'artist-list' key.
 
 	*Available search fields*: {fields}"""
@@ -1222,7 +1221,8 @@ def search_places(query="", limit=None, offset=None, strict=False, **fields):
 def search_recordings(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for recordings and return a dict with a 'recording-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("recording", query, fields, limit, offset, strict)
 
 
@@ -1230,16 +1230,17 @@ def search_recordings(query="", limit=None, offset=None, strict=False, **fields)
 def search_releases(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for recordings and return a dict with a 'recording-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("release", query, fields, limit, offset, strict)
 
 
 @_docstring_search("release-group")
-def search_release_groups(query="", limit=None, offset=None, strict=False, **fields):
-	"""Search for release groups and return a dict
-	with a 'release-group-list' key.
+def search_release_groups(query: str = "", limit: int | None = None, offset=None, strict=False, **fields) -> dict:
+	"""Search for release groups and return a dict with a 'release-group-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("release-group", query, fields, limit, offset, strict)
 
 
@@ -1247,7 +1248,8 @@ def search_release_groups(query="", limit=None, offset=None, strict=False, **fie
 def search_series(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for series and return a dict with a 'series-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("series", query, fields, limit, offset, strict)
 
 

@@ -33,7 +33,8 @@ _log = logging.getLogger("musicbrainzngs")
 def get_error_message(error):
 	"""Given an error XML message from the webservice containing
 	<error><text>x</text><text>y</text></error>, return a list
-	of [x, y]"""
+	of [x, y]
+	"""
 	try:
 		tree = util.bytes_to_elementtree(error)
 		root = tree.getroot()
@@ -92,7 +93,7 @@ def parse_elements(valid_els: list[str], inner_els: dict, element) -> dict:
 			t = t.split(":")[1]
 		if t in valid_els:
 			result[t] = sub.text or ""
-		elif t in inner_els.keys():
+		elif t in inner_els:
 			inner_result = inner_els[t](sub)
 			if isinstance(inner_result, tuple) and inner_result[0]:
 				result.update(inner_result[1])
@@ -368,8 +369,7 @@ def parse_relation_target(tgt):
 	attributes = parse_attributes(["id"], tgt)
 	if "id" in attributes:
 		return (True, {"target-id": attributes["id"]})
-	else:
-		return (True, {"target-id": tgt.text})
+	return (True, {"target-id": tgt.text})
 
 
 def parse_relation_list(rl):
@@ -460,7 +460,8 @@ def parse_release(release):
 def parse_medium_list(ml):
 	"""medium-list results from search have an additional
 	<track-count> element containing the number of tracks
-	over all mediums. Optionally add this"""
+	over all mediums. Optionally add this
+	"""
 	medium_list = []
 	track_count = None
 	for m in ml:

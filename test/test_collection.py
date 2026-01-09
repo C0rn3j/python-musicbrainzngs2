@@ -37,8 +37,8 @@ class CollectionTest(unittest.TestCase):
 
 	def test_my_collections(self):
 		"""If you ask for your collections, you need to have
-		authenticated first."""
-
+		authenticated first.
+		"""
 		old_mb_request = musicbrainzngs.musicbrainz._mb_request
 
 		params = {}
@@ -62,8 +62,8 @@ class CollectionTest(unittest.TestCase):
 
 	def test_other_collection(self):
 		"""If you ask for someone else's collection, you don't
-		need to be authenticated."""
-
+		need to be authenticated.
+		"""
 		old_mb_request = musicbrainzngs.musicbrainz._mb_request
 
 		params = {}
@@ -91,7 +91,6 @@ class CollectionTest(unittest.TestCase):
 
 	def test_no_collection(self):
 		"""If a collection doesn't exist, you get a 404"""
-
 		exc = HTTPError("", 404, "", "", StringIO(""))
 		self.opener = _common.FakeOpener(exception=musicbrainzngs.ResponseError(cause=exc))
 		musicbrainzngs.compat.build_opener = lambda *args: self.opener
@@ -103,8 +102,8 @@ class CollectionTest(unittest.TestCase):
 
 	def test_private_collection(self):
 		"""If you ask for a collection that is private, you should
-		get a 401"""
-
+		get a 401
+		"""
 		exc = HTTPError("", 401, "", "", StringIO(""))
 		self.opener = _common.FakeOpener(exception=musicbrainzngs.AuthenticationError(cause=exc))
 		musicbrainzngs.compat.build_opener = lambda *args: self.opener

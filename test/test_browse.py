@@ -203,7 +203,8 @@ class BrowseTest(unittest.TestCase):
 
 	def test_browse_includes_is_subset_of_includes(self):
 		"""Check that VALID_BROWSE_INCLUDES is a strict subset of
-		VALID_INCLUDES"""
+		VALID_INCLUDES
+		"""
 		for entity, includes in musicbrainzngs.VALID_BROWSE_INCLUDES.items():
 			for i in includes:
 				self.assertTrue(

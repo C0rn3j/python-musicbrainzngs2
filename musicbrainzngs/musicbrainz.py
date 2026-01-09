@@ -3,26 +3,24 @@
 # This file is distributed under a BSD-2-Clause type license.
 # See the COPYING file for more information.
 
+import hashlib
+import json
+import locale
+import logging
 import re
+import socket
+import sys
 import threading
 import time
-import logging
-import socket
-import hashlib
-import locale
-import sys
-import json
 import xml.etree.ElementTree as etree
-from xml.parsers import expat
-from warnings import warn
-
-from musicbrainzngs import mbxml
-from musicbrainzngs import util
-from musicbrainzngs import compat
 from http.client import BadStatusLine, HTTPException
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode, urlunparse
 from urllib.request import HTTPDigestAuthHandler, HTTPHandler, HTTPPasswordMgr, Request
+from warnings import warn
+from xml.parsers import expat
+
+from musicbrainzngs import compat, mbxml, util
 
 _version = "0.7.1"
 _log = logging.getLogger("musicbrainzngs")
@@ -389,13 +387,11 @@ AUTH_REQUIRED_INCLUDES = ["user-tags", "user-ratings", "user-genres"]
 class MusicBrainzError(Exception):
 	"""Base class for all exceptions related to MusicBrainz."""
 
-	pass
 
 
 class UsageError(MusicBrainzError):
 	"""Error related to misuse of the module API."""
 
-	pass
 
 
 class InvalidSearchFieldError(UsageError):
@@ -444,19 +440,16 @@ class WebServiceError(MusicBrainzError):
 class NetworkError(WebServiceError):
 	"""Problem communicating with the MB server."""
 
-	pass
 
 
 class ResponseError(WebServiceError):
 	"""Bad response sent by the MB server."""
 
-	pass
 
 
 class AuthenticationError(WebServiceError):
 	"""Received a HTTP 401 response while accessing a protected resource."""
 
-	pass
 
 
 # Helpers for validating and formatting allowed sets.
@@ -502,9 +495,9 @@ def _check_filter_and_make_params(entity, includes, release_status=[], release_t
 
 	# Build parameters.
 	params = {}
-	if len(release_status):
+	if release_status:
 		params["status"] = "|".join(release_status)
-	if len(release_type):
+	if release_type:
 		params["type"] = "|".join(release_type)
 	return params
 
@@ -555,7 +548,8 @@ def auth(u, p):
 
 def set_useragent(app, version, contact=None):
 	"""Set the User-Agent to be used for requests to the MusicBrainz webservice.
-	This must be set before requests are made."""
+	This must be set before requests are made.
+	"""
 	global _useragent, _client
 	if not app or not version:
 		raise ValueError("App and version can not be empty")
@@ -576,7 +570,8 @@ def set_hostname(new_hostname, use_https=False):
 	:param bool use_https: `True` if the host should be accessed using https. Default is `False`
 
 	Specify a non-standard port by adding it to the hostname,
-	for example 'localhost:8000'."""
+	for example 'localhost:8000'.
+	"""
 	global hostname
 	global https
 	hostname = new_hostname
@@ -613,7 +608,7 @@ def set_rate_limit(limit_or_interval=1.0, new_requests=1):
 		limit_requests = new_requests
 
 
-class _rate_limit(object):
+class _rate_limit:
 	"""A decorator that limits the rate at which the function may be
 	called. The rate is controlled by the `limit_interval` and
 	`limit_requests` global variables.  The limiting is thread-safe;
@@ -748,7 +743,7 @@ def _safe_read(opener, req, body=None, max_retries=_max_retries, retry_delay_del
 			if exc.code in (400, 404, 411):
 				# Bad request, not found, etc.
 				raise ResponseError(cause=exc)
-			elif exc.code in (503, 502, 500):
+			if exc.code in (503, 502, 500):
 				# Rate limiting, internal overloading...
 				_log.info("HTTP error %i" % exc.code)
 			elif exc.code in (401,):
@@ -777,7 +772,7 @@ def _safe_read(opener, req, body=None, max_retries=_max_retries, retry_delay_del
 			if exc.errno == 104:
 				continue
 			raise NetworkError(cause=exc)
-		except IOError as exc:
+		except OSError as exc:
 			raise NetworkError(cause=exc)
 
 	# Out of retries!
@@ -943,13 +938,11 @@ def _get_auth_type(entity, id, includes):
 	"""
 	if "user-tags" in includes or "user-ratings" in includes or "user-genres" in includes:
 		return AUTH_YES
-	elif entity.startswith("collection"):
+	if entity.startswith("collection"):
 		if not id:
 			return AUTH_YES
-		else:
-			return AUTH_IFSET
-	else:
-		return AUTH_NO
+		return AUTH_IFSET
+	return AUTH_NO
 
 
 def _do_mb_query(entity, id, includes=[], params={}):
@@ -1052,7 +1045,8 @@ def _do_mb_post(path, body):
 def get_area_by_id(id, includes=[], release_status=[], release_type=[]):
 	"""Get the area with the MusicBrainz `id` as a dict with an 'area' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("area", includes, release_status, release_type)
 	return _do_mb_query("area", id, includes, params)
 
@@ -1061,7 +1055,8 @@ def get_area_by_id(id, includes=[], release_status=[], release_type=[]):
 def get_artist_by_id(id, includes=[], release_status=[], release_type=[]):
 	"""Get the artist with the MusicBrainz `id` as a dict with an 'artist' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("artist", includes, release_status, release_type)
 	return _do_mb_query("artist", id, includes, params)
 
@@ -1070,7 +1065,8 @@ def get_artist_by_id(id, includes=[], release_status=[], release_type=[]):
 def get_instrument_by_id(id, includes=[], release_status=[], release_type=[]):
 	"""Get the instrument with the MusicBrainz `id` as a dict with an 'artist' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("instrument", includes, release_status, release_type)
 	return _do_mb_query("instrument", id, includes, params)
 
@@ -1079,7 +1075,8 @@ def get_instrument_by_id(id, includes=[], release_status=[], release_type=[]):
 def get_label_by_id(id, includes=[], release_status=[], release_type=[]):
 	"""Get the label with the MusicBrainz `id` as a dict with a 'label' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("label", includes, release_status, release_type)
 	return _do_mb_query("label", id, includes, params)
 
@@ -1088,7 +1085,8 @@ def get_label_by_id(id, includes=[], release_status=[], release_type=[]):
 def get_place_by_id(id, includes=[], release_status=[], release_type=[]):
 	"""Get the place with the MusicBrainz `id` as a dict with an 'place' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("place", includes, release_status, release_type)
 	return _do_mb_query("place", id, includes, params)
 
@@ -1100,7 +1098,8 @@ def get_event_by_id(id, includes=[], release_status=[], release_type=[]):
 	The event dict has the following keys:
 	`id`, `type`, `name`, `time`, `disambiguation` and `life-span`.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("event", includes, release_status, release_type)
 	return _do_mb_query("event", id, includes, params)
 
@@ -1110,7 +1109,8 @@ def get_recording_by_id(id, includes=[], release_status=[], release_type=[]):
 	"""Get the recording with the MusicBrainz `id` as a dict
 	with a 'recording' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("recording", includes, release_status, release_type)
 	return _do_mb_query("recording", id, includes, params)
 
@@ -1119,7 +1119,8 @@ def get_recording_by_id(id, includes=[], release_status=[], release_type=[]):
 def get_release_by_id(id, includes=[], release_status=[], release_type=[]):
 	"""Get the release with the MusicBrainz `id` as a dict with a 'release' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("release", includes, release_status, release_type)
 	return _do_mb_query("release", id, includes, params)
 
@@ -1129,7 +1130,8 @@ def get_release_group_by_id(id, includes=[], release_status=[], release_type=[])
 	"""Get the release group with the MusicBrainz `id` as a dict
 	with a 'release-group' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("release-group", includes, release_status, release_type)
 	return _do_mb_query("release-group", id, includes, params)
 
@@ -1138,7 +1140,8 @@ def get_release_group_by_id(id, includes=[], release_status=[], release_type=[])
 def get_series_by_id(id, includes=[]):
 	"""Get the series with the MusicBrainz `id` as a dict with a 'series' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	return _do_mb_query("series", id, includes)
 
 
@@ -1146,7 +1149,8 @@ def get_series_by_id(id, includes=[]):
 def get_work_by_id(id, includes=[]):
 	"""Get the work with the MusicBrainz `id` as a dict with a 'work' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	return _do_mb_query("work", id, includes)
 
 
@@ -1154,7 +1158,8 @@ def get_work_by_id(id, includes=[]):
 def get_url_by_id(id, includes=[]):
 	"""Get the url with the MusicBrainz `id` as a dict with a 'url' key.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	return _do_mb_query("url", id, includes)
 
 
@@ -1165,7 +1170,8 @@ def get_url_by_id(id, includes=[]):
 def search_annotations(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for annotations and return a dict with an 'annotation-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("annotation", query, fields, limit, offset, strict)
 
 
@@ -1173,7 +1179,8 @@ def search_annotations(query="", limit=None, offset=None, strict=False, **fields
 def search_areas(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for areas and return a dict with an 'area-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("area", query, fields, limit, offset, strict)
 
 
@@ -1181,7 +1188,8 @@ def search_areas(query="", limit=None, offset=None, strict=False, **fields):
 def search_artists(query="", limit=None, offset=None, strict=False, **fields) -> dict:
 	"""Search for artists and return a dict with an 'artist-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("artist", query, fields, limit, offset, strict)
 
 
@@ -1189,7 +1197,8 @@ def search_artists(query="", limit=None, offset=None, strict=False, **fields) ->
 def search_events(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for events and return a dict with an 'event-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("event", query, fields, limit, offset, strict)
 
 
@@ -1197,7 +1206,8 @@ def search_events(query="", limit=None, offset=None, strict=False, **fields):
 def search_instruments(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for instruments and return a dict with a 'instrument-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("instrument", query, fields, limit, offset, strict)
 
 
@@ -1205,7 +1215,8 @@ def search_instruments(query="", limit=None, offset=None, strict=False, **fields
 def search_labels(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for labels and return a dict with a 'label-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("label", query, fields, limit, offset, strict)
 
 
@@ -1213,7 +1224,8 @@ def search_labels(query="", limit=None, offset=None, strict=False, **fields):
 def search_places(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for places and return a dict with a 'place-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("place", query, fields, limit, offset, strict)
 
 
@@ -1257,7 +1269,8 @@ def search_series(query="", limit=None, offset=None, strict=False, **fields):
 def search_works(query="", limit=None, offset=None, strict=False, **fields):
 	"""Search for works and return a dict with a 'work-list' key.
 
-	*Available search fields*: {fields}"""
+	*Available search fields*: {fields}
+	"""
 	return _do_mb_search("work", query, fields, limit, offset, strict)
 
 
@@ -1286,7 +1299,8 @@ def get_releases_by_discid(id, includes=[], toc=None, cdstubs=True, media_format
 	A 'disc' has an 'offset-count', an 'offset-list' and a 'release-list'.
 	A 'cdstub' key has direct 'artist' and 'title' keys.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("discid", includes, release_status=[], release_type=[])
 	if toc:
 		params["toc"] = toc
@@ -1303,7 +1317,8 @@ def get_recordings_by_isrc(isrc, includes=[], release_status=[], release_type=[]
 	The result is a dict with an 'isrc' key,
 	which again includes a 'recording-list'.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = _check_filter_and_make_params("isrc", includes, release_status, release_type)
 	return _do_mb_query("isrc", isrc, includes, params)
 
@@ -1313,7 +1328,8 @@ def get_works_by_iswc(iswc, includes=[]):
 	"""Search for works with an :musicbrainz:`ISWC`.
 	The result is a dict with a`work-list`.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	return _do_mb_query("iswc", iswc, includes)
 
 
@@ -1344,7 +1360,8 @@ def browse_artists(recording=None, release=None, release_group=None, work=None, 
 	"""Get all artists linked to a recording, a release or a release group.
 	You need to give one MusicBrainz ID.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = {"recording": recording, "release": release, "release-group": release_group, "work": work}
 	return _browse_impl("artist", includes, limit, offset, params)
 
@@ -1354,7 +1371,8 @@ def browse_events(area=None, artist=None, place=None, includes=[], limit=None, o
 	"""Get all events linked to a area, a artist or a place.
 	You need to give one MusicBrainz ID.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = {"area": area, "artist": artist, "place": place}
 	return _browse_impl("event", includes, limit, offset, params)
 
@@ -1363,7 +1381,8 @@ def browse_events(area=None, artist=None, place=None, includes=[], limit=None, o
 def browse_labels(release=None, includes=[], limit=None, offset=None):
 	"""Get all labels linked to a relase. You need to give a MusicBrainz ID.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = {"release": release}
 	return _browse_impl("label", includes, limit, offset, params)
 
@@ -1372,7 +1391,8 @@ def browse_labels(release=None, includes=[], limit=None, offset=None):
 def browse_places(area=None, includes=[], limit=None, offset=None):
 	"""Get all places linked to an area. You need to give a MusicBrainz ID.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = {"area": area}
 	return _browse_impl("place", includes, limit, offset, params)
 
@@ -1382,7 +1402,8 @@ def browse_recordings(artist=None, release=None, includes=[], limit=None, offset
 	"""Get all recordings linked to an artist or a release.
 	You need to give one MusicBrainz ID.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = {"artist": artist, "release": release}
 	return _browse_impl("recording", includes, limit, offset, params)
 
@@ -1409,7 +1430,8 @@ def browse_releases(
 	You can filter by :data:`musicbrainz.VALID_RELEASE_TYPES` or
 	:data:`musicbrainz.VALID_RELEASE_STATUSES`.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	# track_artist param doesn't work yet
 	params = {
 		"artist": artist,
@@ -1428,7 +1450,8 @@ def browse_release_groups(artist=None, release=None, release_type=[], includes=[
 
 	You can filter by :data:`musicbrainz.VALID_RELEASE_TYPES`.
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = {"artist": artist, "release": release}
 	return _browse_impl("release-group", includes, limit, offset, params, [], release_type)
 
@@ -1438,7 +1461,8 @@ def browse_urls(resource=None, includes=[], limit=None, offset=None):
 	"""Get urls by actual URL string.
 	You need to give a URL string as 'resource'
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = {"resource": resource}
 	return _browse_impl("url", includes, limit, offset, params)
 
@@ -1447,7 +1471,8 @@ def browse_urls(resource=None, includes=[], limit=None, offset=None):
 def browse_works(artist=None, includes=[], limit=None, offset=None):
 	"""Get all works linked to an artist
 
-	*Available includes*: {includes}"""
+	*Available includes*: {includes}
+	"""
 	params = {"artist": artist}
 	return _browse_impl("work", includes, limit, offset, params)
 
@@ -1455,7 +1480,8 @@ def browse_works(artist=None, includes=[], limit=None, offset=None):
 # Collections
 def get_collections():
 	"""List the collections for the currently :func:`authenticated <auth>` user
-	as a dict with a 'collection-list' key."""
+	as a dict with a 'collection-list' key.
+	"""
 	# Missing <release-list count="n"> the count in the reply
 	return _do_mb_query("collection", "")
 

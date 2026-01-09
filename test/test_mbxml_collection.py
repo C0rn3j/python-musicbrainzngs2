@@ -60,14 +60,12 @@ class GetCollectionTest(unittest.TestCase):
 		self.datadir = os.path.join(os.path.dirname(__file__), "data", "collection")
 
 	def testCollectionInfo(self):
-		"""
-		Test that the id, name and author are given.
+		"""Test that the id, name and author are given.
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "0b15c97c-8eb8-4b4f-81c3-0eb24266a2ac-releases.xml")
 
 	def testCollectionReleases(self):
-		"""
-		Test that the list of releases is given.
+		"""Test that the list of releases is given.
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "0b15c97c-8eb8-4b4f-81c3-0eb24266a2ac-releases.xml")
 		coll = res["collection"]

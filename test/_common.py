@@ -10,7 +10,8 @@ import musicbrainzngs
 
 class FakeOpener(OpenerDirector):
 	"""A URL Opener that saves the URL requested and
-	returns a dummy response or raises an exception"""
+	returns a dummy response or raises an exception
+	"""
 
 	def __init__(self, response="<response/>", exception=None):
 		self.myurl = None
@@ -29,8 +30,7 @@ class FakeOpener(OpenerDirector):
 
 		if isinstance(self.response, str):
 			return StringIO(self.response)
-		else:
-			return BytesIO(self.response)
+		return BytesIO(self.response)
 
 	def get_url(self):
 		return self.myurl
@@ -41,7 +41,7 @@ class FakeOpener(OpenerDirector):
 
 
 # Mock timing.
-class Timecop(object):
+class Timecop:
 	"""Mocks the timing system (namely time() and sleep()) for testing.
 	Inspired by the Ruby timecop library.
 	"""

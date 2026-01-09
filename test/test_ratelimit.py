@@ -9,7 +9,8 @@ from test._common import Timecop
 class RateLimitArgumentTest(unittest.TestCase):
 	def test_invalid_args(self):
 		"""Passing invalid arguments to set_rate_limit should throw
-		an exception"""
+		an exception
+		"""
 		try:
 			musicbrainzngs.set_rate_limit(1, 0)
 			self.fail("Required exception wasn't raised")

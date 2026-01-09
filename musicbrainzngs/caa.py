@@ -4,13 +4,13 @@
 # See the COPYING file for more information.
 
 __all__ = [
-	"set_caa_hostname",
-	"get_image_list",
-	"get_release_group_image_list",
-	"get_release_group_image_front",
-	"get_image_front",
-	"get_image_back",
 	"get_image",
+	"get_image_back",
+	"get_image_front",
+	"get_image_list",
+	"get_release_group_image_front",
+	"get_release_group_image_list",
+	"set_caa_hostname",
 ]
 
 import json
@@ -83,10 +83,9 @@ def _caa_request(mbid, imageid=None, size=None, entitytype="release"):
 	if imageid:
 		# If we asked for an image, return the image
 		return resp
-	else:
-		# Otherwise it's json
-		data = _unicode(resp)
-		return json.loads(data)
+	# Otherwise it's json
+	data = _unicode(resp)
+	return json.loads(data)
 
 
 def get_image_list(releaseid):

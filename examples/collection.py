@@ -96,7 +96,7 @@ def show_collection(collection_id, ctype):
 				name=collection["name"], editor=collection["editor"], mbid=collection["id"]
 			)
 		)
-	print("")
+	print()
 	# release count is only available starting with musicbrainzngs 0.5
 	if "release-count" in collection:
 		print("{} releases".format(collection["release-count"]))
@@ -110,7 +110,7 @@ def show_collection(collection_id, ctype):
 		print("{} recordings".format(collection["recording-count"]))
 	if "work-count" in collection:
 		print("{} works".format(collection["work-count"]))
-	print("")
+	print()
 
 	if "release-list" in collection:
 		show_releases(collection)
@@ -124,7 +124,7 @@ def show_releases(collection):
 	print("Releases:")
 	releases_fetched = 0
 	while len(release_list) > 0:
-		print("")
+		print()
 		releases_fetched += len(release_list)
 		for release in release_list:
 			print("{title} ({mbid})".format(title=release["title"], mbid=release["id"]))
@@ -136,7 +136,7 @@ def show_releases(collection):
 		collection = result["collection"]
 		release_list = collection["release-list"]
 
-	print("")
+	print()
 	print("Number of fetched releases: %d" % releases_fetched)
 
 
@@ -154,7 +154,7 @@ if __name__ == "__main__":
 	username = args.pop(0)
 
 	# Input the password.
-	password = getpass.getpass("Password for {}: ".format(username))
+	password = getpass.getpass(f"Password for {username}: ")
 
 	# Call musicbrainzngs.auth() before making any API calls that
 	# require authentication.
@@ -175,9 +175,9 @@ if __name__ == "__main__":
 				sys.exit("only release collections can be modified ATM")
 		else:
 			# Print out the collection's contents.
-			print("")
+			print()
 			show_collection(collection_id, options.type)
 	else:
 		# Show all collections.
-		print("")
+		print()
 		show_collections()

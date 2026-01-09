@@ -41,13 +41,13 @@ def show_offsets(offset_list):
 			offsets = str(offset)
 		else:
 			offsets += " " + str(offset)
-	print("\toffsets: {}".format(offsets))
+	print(f"\toffsets: {offsets}")
 
 
 if __name__ == "__main__":
 	args = sys.argv[1:]
 	if len(args) != 1:
-		sys.exit("usage: {} DISC_ID".format(sys.argv[0]))
+		sys.exit(f"usage: {sys.argv[0]} DISC_ID")
 	discid = args[0]
 
 	try:
@@ -69,7 +69,7 @@ if __name__ == "__main__":
 			print("\tTracks: {}".format(result["disc"]["offset-count"]))
 		for release in result["disc"]["release-list"]:
 			show_release_details(release)
-			print("")
+			print()
 	elif result.get("cdstub"):
 		print("cdstub:")
 		print("\tArtist: {}".format(result["cdstub"]["artist"]))

@@ -7,7 +7,8 @@ from test import _common
 
 class ArgumentTest(unittest.TestCase):
 	"""Tests request methods to ensure they're enforcing general parameters
-	(useragent, authentication)."""
+	(useragent, authentication).
+	"""
 
 	def setUp(self):
 		self.opener = _common.FakeOpener("<response/>")
@@ -64,7 +65,8 @@ class ArgumentTest(unittest.TestCase):
 
 class MethodTest(unittest.TestCase):
 	"""Tests the various _do_mb_* methods to ensure they're setting the
-	using the correct HTTP method."""
+	using the correct HTTP method.
+	"""
 
 	def setUp(self):
 		self.opener = _common.FakeOpener("<response/>")

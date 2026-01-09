@@ -33,7 +33,7 @@ def show_release_details(rel):
 if __name__ == "__main__":
 	args = sys.argv[1:]
 	if len(args) != 2:
-		sys.exit("usage: {} ARTIST ALBUM".format(sys.argv[0]))
+		sys.exit(f"usage: {sys.argv[0]} ARTIST ALBUM")
 	artist, album = args
 
 	# Keyword arguments to the "search_*" functions limit keywords to
@@ -46,6 +46,6 @@ if __name__ == "__main__":
 	if not result["release-list"]:
 		sys.exit("no release found")
 	for idx, release in enumerate(result["release-list"]):
-		print("match #{}:".format(idx + 1))
+		print(f"match #{idx + 1}:")
 		show_release_details(release)
 		print()

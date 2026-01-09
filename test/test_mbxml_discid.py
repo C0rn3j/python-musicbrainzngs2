@@ -45,17 +45,14 @@ class GetDiscIdTest(unittest.TestCase):
 		self.datadir = os.path.join(os.path.dirname(__file__), "data", "discid")
 
 	def testDiscId(self):
-		"""
-		Test that the id attribute of the disc is read.
+		"""Test that the id attribute of the disc is read.
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "xp5tz6rE4OHrBafj0bLfDRMGK48-.xml")
 		self.assertEqual(res["disc"]["id"], "xp5tz6rE4OHrBafj0bLfDRMGK48-")
 
 	def testTrackCount(self):
+		"""Test that the number of tracks (offset-count) is returned.
 		"""
-		Test that the number of tracks (offset-count) is returned.
-		"""
-
 		# discid without pregap track
 		res = _common.open_and_parse_test_data(self.datadir, "xp5tz6rE4OHrBafj0bLfDRMGK48-.xml")
 		self.assertEqual(res["disc"]["offset-count"], 8)
@@ -66,8 +63,7 @@ class GetDiscIdTest(unittest.TestCase):
 		self.assertEqual(res["disc"]["offset-count"], 13)
 
 	def testOffsets(self):
-		"""
-		Test that the correct list of offsets is returned.
+		"""Test that the correct list of offsets is returned.
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "xp5tz6rE4OHrBafj0bLfDRMGK48-.xml")
 		offsets_res = res["disc"]["offset-list"]
@@ -77,8 +73,7 @@ class GetDiscIdTest(unittest.TestCase):
 			self.assertTrue(isinstance(offsets_res[i], int))
 
 	def testReleaseList(self):
-		"""
-		Test that a release list of correct size is given.
+		"""Test that a release list of correct size is given.
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "xp5tz6rE4OHrBafj0bLfDRMGK48-.xml")
 		self.assertEqual(res["disc"]["release-count"], 3)

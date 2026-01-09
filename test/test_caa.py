@@ -3,7 +3,7 @@ from io import StringIO
 from urllib.error import HTTPError
 
 import musicbrainzngs
-from musicbrainzngs import caa, compat
+from musicbrainzngs import caa
 from musicbrainzngs.musicbrainz import _version
 from test import _common
 
@@ -34,7 +34,6 @@ class CaaTest(unittest.TestCase):
 
 	def test_list_none(self):
 		"""When CAA gives a 404 error, pass it through."""
-
 		exc = HTTPError("", 404, "", "", StringIO(""))
 		self.opener = _common.FakeOpener(exception=musicbrainzngs.ResponseError(cause=exc))
 		musicbrainzngs.compat.build_opener = lambda *args: self.opener

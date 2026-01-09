@@ -46,11 +46,9 @@ class GetReleaseTest(unittest.TestCase):
 		self.datadir = os.path.join(os.path.dirname(__file__), "data", "release")
 
 	def testArtistCredit(self):
-		"""
-		If the artist credit is the same in the track and recording, make sure that
+		"""If the artist credit is the same in the track and recording, make sure that
 		the information is replicated in both objects, otherwise have distinct ones.
 		"""
-
 		# If no artist-credit in the track, copy in the recording one
 		res = _common.open_and_parse_test_data(
 			self.datadir, "833d4c3a-2635-4b7a-83c4-4e560588f23a-recordings+artist-credits.xml"
@@ -72,16 +70,14 @@ class GetReleaseTest(unittest.TestCase):
 		self.assertNotEqual(t1["recording"]["artist-credit-phrase"], t1["artist-credit-phrase"])
 
 	def testTrackId(self):
-		"""
-		Test that the id attribute of tracks is read.
+		"""Test that the id attribute of tracks is read.
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "212895ca-ee36-439a-a824-d2620cd10461-recordings.xml")
 		tracks = res["release"]["medium-list"][0]["track-list"]
 		map(lambda t: self.assertTrue("id" in t), tracks)
 
 	def testTrackLength(self):
-		"""
-		Test that if there is a track length, then `track_or_recording_length` has
+		"""Test that if there is a track length, then `track_or_recording_length` has
 		that, but if not then fill the value from the recording length
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "b66ebe6d-a577-4af8-9a2e-a029b2147716-recordings.xml")
@@ -115,8 +111,7 @@ class GetReleaseTest(unittest.TestCase):
 		pass
 
 	def testTrackNumber(self):
-		"""
-		Test that track number (number or text) and track position (always an increasing number)
+		"""Test that track number (number or text) and track position (always an increasing number)
 		are both read properly
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "212895ca-ee36-439a-a824-d2620cd10461-recordings.xml")
@@ -137,8 +132,7 @@ class GetReleaseTest(unittest.TestCase):
 		self.assertEqual(list(map(str, range(1, 199))), [t["number"] for t in tracks])
 
 	def testVideo(self):
-		"""
-		Test that the video attribute is parsed.
+		"""Test that the video attribute is parsed.
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "fe29e7f0-eb46-44ba-9348-694166f47885-recordings.xml")
 		trackswithoutvideo = res["release"]["medium-list"][0]["track-list"]
@@ -147,8 +141,7 @@ class GetReleaseTest(unittest.TestCase):
 		map(lambda t: self.assertEqual("true", t["recording"]["video"]), trackswithvideo)
 
 	def testPregapTrack(self):
-		"""
-		Test that the pregap track is parsed if it exists.
+		"""Test that the pregap track is parsed if it exists.
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "8eb2b179-643d-3507-b64c-29fcc6745156-recordings.xml")
 		medium = res["release"]["medium-list"][0]
@@ -159,8 +152,7 @@ class GetReleaseTest(unittest.TestCase):
 		self.assertEqual("[untitled]", medium["pregap"]["recording"]["title"])
 
 	def testDataTracklist(self):
-		"""
-		Test that data tracklist are parsed.
+		"""Test that data tracklist are parsed.
 		"""
 		res = _common.open_and_parse_test_data(self.datadir, "9ce41d09-40e4-4d33-af0c-7fed1e558dba-recordings.xml")
 		medium = res["release"]["medium-list"][0]

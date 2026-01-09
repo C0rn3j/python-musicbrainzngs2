@@ -1,4 +1,5 @@
 """Common support for the test cases."""
+
 import time
 from io import BytesIO, StringIO
 from os.path import join
@@ -8,71 +9,74 @@ import musicbrainzngs
 
 
 class FakeOpener(OpenerDirector):
-    """ A URL Opener that saves the URL requested and
-    returns a dummy response or raises an exception """
-    def __init__(self, response="<response/>", exception=None):
-        self.myurl = None
-        self.headers = None
-        self.response = response
-        self.exception = exception
-        self.handlers = []
+	"""A URL Opener that saves the URL requested and
+	returns a dummy response or raises an exception"""
 
-    def open(self, request, body=None):
-        self.myurl = request.get_full_url()
-        self.headers = request.header_items()
-        self.request = request
+	def __init__(self, response="<response/>", exception=None):
+		self.myurl = None
+		self.headers = None
+		self.response = response
+		self.exception = exception
+		self.handlers = []
 
-        if self.exception:
-            raise self.exception
+	def open(self, request, body=None):
+		self.myurl = request.get_full_url()
+		self.headers = request.header_items()
+		self.request = request
 
-        if isinstance(self.response, str):
-            return StringIO(self.response)
-        else:
-            return BytesIO(self.response)
+		if self.exception:
+			raise self.exception
 
-    def get_url(self):
-        return self.myurl
+		if isinstance(self.response, str):
+			return StringIO(self.response)
+		else:
+			return BytesIO(self.response)
 
-    def add_handlers_and_return(self, handlers=[]):
-        self.handlers.extend(handlers)
-        return self
+	def get_url(self):
+		return self.myurl
+
+	def add_handlers_and_return(self, handlers=[]):
+		self.handlers.extend(handlers)
+		return self
 
 
 # Mock timing.
 class Timecop(object):
-    """Mocks the timing system (namely time() and sleep()) for testing.
-    Inspired by the Ruby timecop library.
-    """
-    def __init__(self):
-        self.now = time.time()
+	"""Mocks the timing system (namely time() and sleep()) for testing.
+	Inspired by the Ruby timecop library.
+	"""
 
-    def time(self):
-        return self.now
+	def __init__(self):
+		self.now = time.time()
 
-    def sleep(self, amount):
-        self.now += amount
+	def time(self):
+		return self.now
 
-    def install(self):
-        self.orig = {
-            'time': time.time,
-            'sleep': time.sleep,
-        }
-        time.time = self.time
-        time.sleep = self.sleep
+	def sleep(self, amount):
+		self.now += amount
 
-    def restore(self):
-        time.time = self.orig['time']
-        time.sleep = self.orig['sleep']
+	def install(self):
+		self.orig = {
+			"time": time.time,
+			"sleep": time.sleep,
+		}
+		time.time = self.time
+		time.sleep = self.sleep
+
+	def restore(self):
+		time.time = self.orig["time"]
+		time.sleep = self.orig["sleep"]
+
 
 def open_and_parse_test_data(datadir, filename):
-    """Opens an XML file dumped from the MusicBrainz web service and returns
-    the parses it.
+	"""Opens an XML file dumped from the MusicBrainz web service and returns
+	the parses it.
 
-    :datadir: The directory containing the file
-    :filename: The filename of the XML file
-    :returns: The parsed representation of the XML files content
+	:datadir: The directory containing the file
+	:filename: The filename of the XML file
+	:returns: The parsed representation of the XML files content
 
-    """
-    with open(join(datadir, filename), 'rb') as msg:
-        res = musicbrainzngs.mbxml.parse_message(msg)
-    return res
+	"""
+	with open(join(datadir, filename), "rb") as msg:
+		res = musicbrainzngs.mbxml.parse_message(msg)
+	return res

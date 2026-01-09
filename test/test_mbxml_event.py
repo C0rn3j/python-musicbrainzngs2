@@ -1,7 +1,8 @@
 # Tests for parsing of event results
 
-import unittest
 import os
+import unittest
+
 from test import _common
 
 

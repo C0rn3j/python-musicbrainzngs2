@@ -3,9 +3,9 @@
 # This file is distributed under a BSD-2-Clause type license.
 # See the COPYING file for more information.
 
+import logging
 import re
 import xml.etree.ElementTree as ET
-import logging
 
 from . import util
 

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-#
 # musicbrainzngs documentation build configuration file, created by
 # sphinx-quickstart2 on Thu Apr 26 15:56:46 2012.
 #
@@ -11,7 +9,8 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import os
+import sys
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the

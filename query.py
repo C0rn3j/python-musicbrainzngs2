@@ -1,8 +1,7 @@
-import sys
-
 import musicbrainzngs as m
 
-def main():
+
+def main() -> None:
 	m.set_useragent("application", "0.01", "http://example.com")
 	print(m.get_artist_by_id("952a4205-023d-4235-897c-6fdb6f58dfaa", []))
 	#print m.get_label_by_id("aab2e720-bdd2-4565-afc2-460743585f16")

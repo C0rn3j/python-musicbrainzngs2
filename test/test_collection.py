@@ -1,4 +1,5 @@
 import unittest
+
 import musicbrainzngs
 from musicbrainzngs import compat
 from test import _common

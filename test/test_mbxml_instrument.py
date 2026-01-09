@@ -1,8 +1,9 @@
 # -*- coding: UTF-8 -*-
 # Tests for parsing instrument queries
 
-import unittest
 import os
+import unittest
+
 from test import _common
 
 

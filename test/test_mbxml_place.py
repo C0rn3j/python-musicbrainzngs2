@@ -1,7 +1,8 @@
 # Tests for parsing of place results
 
-import unittest
 import os
+import unittest
+
 from test import _common
 
 

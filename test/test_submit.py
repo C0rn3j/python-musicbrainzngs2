@@ -1,4 +1,5 @@
 import unittest
+
 import musicbrainzngs
 from musicbrainzngs import musicbrainz
 from test import _common
@@ -41,4 +42,3 @@ class SubmitTest(unittest.TestCase):
 
         musicbrainz.submit_tags(artist_tags={"mbid": "single"})
         musicbrainz.mbxml.make_tag_request = oldmake_tag_request
-

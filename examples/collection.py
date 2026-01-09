@@ -23,17 +23,13 @@ To add a release to a collection or remove one:
     $ ./collection.py USERNAME 4137a646-a104-4031-b549-da4e1f36a463
         --remove 0d432d8b-8865-4ae9-8479-3a197620a37b
 """
-from __future__ import print_function
-from __future__ import unicode_literals
-import musicbrainzngs
 import getpass
-from optparse import OptionParser
 import sys
+from optparse import OptionParser
 
-try:
-    user_input = raw_input
-except NameError:
-    user_input = input
+import musicbrainzngs
+
+user_input = input
 
 musicbrainzngs.set_useragent(
     "python-musicbrainzngs-example",

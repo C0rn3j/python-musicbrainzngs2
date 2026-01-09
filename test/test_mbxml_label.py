@@ -1,7 +1,8 @@
 # Tests for parsing of label queries
 
-import unittest
 import os
+import unittest
+
 from test import _common
 
 
@@ -31,5 +32,3 @@ class GetLabelTest(unittest.TestCase):
         self.assertEqual(a0["sort-name"], "Ki/oon Records Inc.")
         self.assertEqual(a0["begin-date"], "2001-10")
         self.assertEqual(a0["end-date"], "2012-04")
-
-

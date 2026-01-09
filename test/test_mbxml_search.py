@@ -1,7 +1,7 @@
-import unittest
 import os
-from musicbrainzngs import mbxml
+import unittest
 
+from musicbrainzngs import mbxml
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
 

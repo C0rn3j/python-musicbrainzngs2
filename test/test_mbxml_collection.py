@@ -1,7 +1,8 @@
 # Tests for parsing of collection queries
 
-import unittest
 import os
+import unittest
+
 import musicbrainzngs
 from test import _common
 

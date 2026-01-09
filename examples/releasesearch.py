@@ -7,10 +7,9 @@ database and prints out a few details about the first 5 matching release.
     Released 1966-08-08 (Official)
     MusicBrainz ID: b4b04cbf-118a-3944-9545-38a0a88ff1a2
 """
-from __future__ import print_function
-from __future__ import unicode_literals
-import musicbrainzngs
 import sys
+
+import musicbrainzngs
 
 musicbrainzngs.set_useragent(
     "python-musicbrainzngs-example",

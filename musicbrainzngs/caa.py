@@ -11,8 +11,7 @@ __all__ = [
 
 import json
 
-from musicbrainzngs import compat
-from musicbrainzngs import musicbrainz
+from musicbrainzngs import compat, musicbrainz
 from musicbrainzngs.util import _unicode
 
 hostname = "coverartarchive.org"

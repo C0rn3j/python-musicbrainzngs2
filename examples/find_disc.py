@@ -12,9 +12,9 @@
         ...
 """
 
-from __future__ import unicode_literals
-import musicbrainzngs
 import sys
+
+import musicbrainzngs
 
 musicbrainzngs.set_useragent(
     "python-musicbrainzngs-example",

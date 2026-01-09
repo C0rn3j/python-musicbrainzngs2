@@ -1,5 +1,6 @@
-import unittest
 import time
+import unittest
+
 import musicbrainzngs
 from musicbrainzngs import musicbrainz
 from test._common import Timecop

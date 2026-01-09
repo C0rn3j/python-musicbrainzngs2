@@ -1,8 +1,8 @@
-# coding=utf-8
 # Tests for parsing of recording queries
 
-import unittest
 import os
+import unittest
+
 from test import _common
 
 

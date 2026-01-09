@@ -1,21 +1,13 @@
 """Common support for the test cases."""
+import io as StringIO
 import time
+from io import BytesIO
+from os.path import join
+from urllib.request import OpenerDirector
 
 import musicbrainzngs
 from musicbrainzngs import compat
-from os.path import join
 
-try:
-    from urllib2 import OpenerDirector
-except ImportError:
-    from urllib.request import OpenerDirector
-
-from io import BytesIO
-
-try:
-    import StringIO
-except ImportError:
-    import io as StringIO
 
 class FakeOpener(OpenerDirector):
     """ A URL Opener that saves the URL requested and

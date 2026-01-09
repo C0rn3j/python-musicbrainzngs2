@@ -1,4 +1,5 @@
 import unittest
+
 import musicbrainzngs
 from test import _common
 
@@ -145,4 +146,3 @@ class UrlTest(unittest.TestCase):
         self.assertRaises(musicbrainzngs.UsageError,
                 musicbrainzngs.get_instrument_by_id,
                 "dabdeb41-560f-4d84-aa6a-cf22349326fe", includes=["ratings"])
-

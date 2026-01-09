@@ -1,9 +1,8 @@
 import unittest
 
-from musicbrainzngs import caa
-from musicbrainzngs import compat
-from musicbrainzngs.musicbrainz import _version
 import musicbrainzngs
+from musicbrainzngs import caa, compat
+from musicbrainzngs.musicbrainz import _version
 from test import _common
 
 
@@ -109,4 +108,3 @@ class CaaTest(unittest.TestCase):
 
         self.assertEqual("https://coverartarchive.org/release/8ec178f4-a8e8-4f22-bcba-1964466ef214/back", self.opener.myurl)
         self.assertEqual(resp, res)
-

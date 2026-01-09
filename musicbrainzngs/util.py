@@ -3,11 +3,12 @@
 # This file is distributed under a BSD-2-Clause type license.
 # See the COPYING file for more information.
 
-import sys
 import locale
+import sys
 import xml.etree.ElementTree as ET
 
 from . import compat
+
 
 def _unicode(string, encoding=None):
     """Try to decode byte strings to unicode.
@@ -36,8 +37,7 @@ def bytes_to_elementtree(bytes_or_file):
 	else:
 		s = bytes_or_file.read()
 
-	if compat.is_py3:
-		s = _unicode(s, "utf-8")
+	s = _unicode(s, "utf-8")
 
 	f = compat.StringIO(s)
 	tree = ET.ElementTree(file=f)

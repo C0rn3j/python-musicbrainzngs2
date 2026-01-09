@@ -1,7 +1,8 @@
 # Tests for parsing of release queries
 
-import unittest
 import os
+import unittest
+
 from test import _common
 
 

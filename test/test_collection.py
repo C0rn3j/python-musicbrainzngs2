@@ -3,7 +3,6 @@ from io import StringIO
 from urllib.error import HTTPError
 
 import musicbrainzngs
-from musicbrainzngs import compat
 from test import _common
 
 

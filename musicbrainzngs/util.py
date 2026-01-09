@@ -8,8 +8,6 @@ import sys
 import xml.etree.ElementTree as ET
 from io import StringIO
 
-from . import compat
-
 
 def _unicode(string, encoding=None):
     """Try to decode byte strings to unicode.

@@ -33,3 +33,61 @@ packages = ["musicbrainzngs"]
 
 [tool.setuptools.dynamic]
 version = { attr = "musicbrainzngs.musicbrainz._version" }
+
+[tool.ruff]
+	# Target non-EOL releases at minimum - https://devguide.python.org/versions/
+	target-version = "py310"
+	# Soft 80 and hard break at 120
+	line-length = 120
+	# Translations
+	builtins = ["_"]
+
+[tool.ruff.lint.flake8-quotes]
+	inline-quotes = "double"
+	docstring-quotes = "double"
+
+[tool.ruff.format]
+	quote-style = "double"
+	indent-style = "tab"
+
+# https://docs.astral.sh/ruff/rules/
+[tool.ruff.lint]
+	select = ['ALL']
+	ignore = [
+		'COM812',  # missing-trailing-comma                    - Using the formatter makes this rule redundant
+		#'C901',    # complex-structure                         - We'll ignore functions being too complex for now - https://github.com/microsoft/pyright/issues/10839
+		'Q003',    # avoidable-escaped-quote                   - It's not that important, we just use escapes, keeping the quotes consistent
+		'W191',    # tab-indentation                           - We use tabs for indents, disabling this PEP 8 recommendation
+		'D206',    # indent-with-spaces                        - ^
+		'D100',    # undocumented-public-module                - TODO(Martin): We currently don't even have typing fully implemented, let's maybe care about undocumented functions/classes later
+		'D101',    # undocumented-public-class                 - ^
+		'D102',    # public-method                             - ^
+		'D103',    # undocumented-public-function              - ^
+		'D104',    # undocumented-public-package               - ^
+		#'D105',    # undocumented-magic-method                 - ^ < This one is a bit more severe though
+		'D106',    # undocumented-public-nested-class          - ^
+		'D107',    # undocumented-public-init                  - ^
+		'D400',    # ends-in-period                            - We do not care if docstrings end with a period
+		'D415',    # ends-in-punctuation                       - ^
+		'D203',   # incorrect-blank-line-before-class          - Clashes with D211
+		#'D211',   # no-blank-line-before-class                 - Clashes with D203
+		#'D212',   # multi-line-summary-first-line              - Clashes with D213
+		'D213',   # multi-line-summary-second-line             - Clashes with D212
+		'D401',    # non-imperative-mood                       - Wants docstrings in imperative language but it's really not foolproof, disable
+		#'E501',    # line-too-long                             - TODO(Martin) - We want this enabled, but only after the rest of issues is gone
+		'EM101',   # raw-string-in-exception                   - We do not care about .format in exceptions, readability is not *our* problem, traceback should be colorized to avoid this instead
+		'EM102',   # f-string-in-exception                     - ^
+		'EM103',   # dot-format-in-exception                   - ^
+		#'S311',    # suspicious-non-cryptographic-random-usage - We aren't using random for anything important
+		'ERA001',  # commented-out-code                        - Tests for commented out code, but it has way too many false positives, so disable
+		'FBT001',  # boolean-type-hint-positional-argument     - Allow positional booleans in functions, it's not really that much of an issue
+		'FBT002',  # boolean-default-value-positional-argument - ^
+		'FBT003',  # boolean-positional-value-in-call          - ^
+		#'G004',    # logging-f-string                          - Ignore this, we lose some efficiency but I suppose nobody wants to do a total overhaul of the logging system for next to no gains
+		#'LOG015',  # root-logger-call                          - We are not a library and have customized the logger
+		#'TD003',   # missing-todo-link                         - We're fine not linking existing issues in TODOs, it's fine to have them noted in code only
+		#'PLR0911', # too-many-return-statements                - We'll ignore functions having too many return statements
+		#'PLR0912', # too-many-branches                         - We'll ignore functions having too many branches for now
+		#'PLR0913', # too-many-arguments                        - We'll ignore functions taking too many arguments
+		#'PLR0915', # too-many-statements                       - We'll ignore functions having too many statements
+	]

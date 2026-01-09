@@ -765,14 +765,12 @@ def _safe_read(opener, req, body=None, max_retries=_max_retries, retry_delay_del
 				if code == 104:  # "Connection reset by peer."
 					continue
 			raise NetworkError(cause=exc)
-		except socket.timeout as exc:
+		except TimeoutError as exc:
 			_log.info("socket timeout")
 			last_exc = exc
-		except socket.error as exc:
+		except OSError as exc:
 			if exc.errno == 104:
 				continue
-			raise NetworkError(cause=exc)
-		except OSError as exc:
 			raise NetworkError(cause=exc)
 
 	# Out of retries!

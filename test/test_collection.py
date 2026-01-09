@@ -1,4 +1,5 @@
 import unittest
+from io import StringIO
 from urllib.error import HTTPError
 
 import musicbrainzngs
@@ -80,7 +81,7 @@ class CollectionTest(unittest.TestCase):
     def test_no_collection(self):
         """ If a collection doesn't exist, you get a 404 """
 
-        exc = HTTPError("", 404, "", "", _common.StringIO.StringIO(""))
+        exc = HTTPError("", 404, "", "", StringIO(""))
         self.opener = _common.FakeOpener(exception=musicbrainzngs.ResponseError(cause=exc))
         musicbrainzngs.compat.build_opener = lambda *args: self.opener
         try:
@@ -93,7 +94,7 @@ class CollectionTest(unittest.TestCase):
         """ If you ask for a collection that is private, you should
         get a 401"""
 
-        exc = HTTPError("", 401, "", "", _common.StringIO.StringIO(""))
+        exc = HTTPError("", 401, "", "", StringIO(""))
         self.opener = _common.FakeOpener(exception=musicbrainzngs.AuthenticationError(cause=exc))
         musicbrainzngs.compat.build_opener = lambda *args: self.opener
         try:

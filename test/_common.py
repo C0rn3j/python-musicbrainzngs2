@@ -1,12 +1,10 @@
 """Common support for the test cases."""
-import io as StringIO
 import time
-from io import BytesIO
+from io import BytesIO, StringIO
 from os.path import join
 from urllib.request import OpenerDirector
 
 import musicbrainzngs
-from musicbrainzngs import compat
 
 
 class FakeOpener(OpenerDirector):
@@ -28,7 +26,7 @@ class FakeOpener(OpenerDirector):
             raise self.exception
 
         if isinstance(self.response, str):
-            return StringIO.StringIO(self.response)
+            return StringIO(self.response)
         else:
             return BytesIO(self.response)
 
@@ -67,7 +65,7 @@ class Timecop(object):
         time.sleep = self.orig['sleep']
 
 def open_and_parse_test_data(datadir, filename):
-    """ Opens an XML file dumped from the MusicBrainz web service and returns
+    """Opens an XML file dumped from the MusicBrainz web service and returns
     the parses it.
 
     :datadir: The directory containing the file
